@@ -27,35 +27,51 @@
         function extrairIDDoURL() {
             const url = window.location.href;
             const partesDoURL = url.split('/');
-            const ultimoSegmento = partesDoURL[partesDoURL.length - 1];
-            // Verificar se o último segmento é um número (ID do filme)
-            if (!isNaN(ultimoSegmento)) {
-                return ultimoSegmento;
-            } else {
-                // Tentar extrair o ID do filme do formato do URL fornecido anteriormente
-                const match = url.match(/\/(\d+)$/);
-                if (match) {
-                    return match[1];
-                } else {
-                    console.error('ID do filme não encontrado no URL.');
-                    return null;
+            for (let i = partesDoURL.length - 1; i >= 0; i--) {
+                const parte = partesDoURL[i];
+                if (!isNaN(parte)) {
+                    return parte;
                 }
             }
+            console.error('ID do filme não encontrado no URL.');
+            return null;
         }
 
-        // Função para fazer a solicitação à API do TMDb e preencher os valores no HTML
+        // Função para simular uma chamada de API interna para obter os dados do filme
+        async function obterDadosFilmeDoAPI(idFilme) {
+            // Simulando uma chamada de API com um atraso de 1 segundo
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    // Simulando os dados do filme
+                    const filme = {
+                        title: 'Nome do Filme',
+                        release_date: '2022-01-01',
+                        runtime: '120',
+                        genres: [{ name: 'Ação' }, { name: 'Aventura' }],
+                        overview: 'Esta é a sinopse do filme.',
+                        contributors: [
+                            { name: 'Contribuidor 1' },
+                            { name: 'Contribuidor 2' },
+                            { name: 'Contribuidor 3' }
+                        ]
+                    };
+                    resolve(filme);
+                }, 1000); // Atraso de 1 segundo
+            });
+        }
+
+        // Função para preencher os dados do filme no HTML
         async function preencherDadosFilme() {
             const idFilme = extrairIDDoURL();
             if (!idFilme) {
                 console.error('ID do filme não encontrado.');
                 return;
             }
-            const url = `https://api.themoviedb.org/3/movie/${idFilme}?api_key=6360eb433f3020d94a5de4f0fb52c720&language=pt-BR`;
             try {
-                const response = await fetch(url);
-                const data = await response.json();
+                // Obter os dados do filme da API interna
+                const data = await obterDadosFilmeDoAPI(idFilme);
                 // Preencher os valores nos elementos HTML
-                document.querySelector('.banner').src = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+                document.querySelector('.banner').src = `https://via.placeholder.com/300x450`; // Substitua pela URL da imagem do filme
                 document.getElementById('titulo').textContent = data.title;
                 document.getElementById('detalhes').textContent = `${data.release_date} • ${data.runtime}m • ${data.genres.map(genre => genre.name).join(' • ')}`;
                 document.getElementById('sinopse').textContent = data.overview;
