@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nsflix</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="content">
+        <img src="imge/logo.jpg" alt="Logo">
+        <h1>Nsflix</h1>
+    </div>
+    <div id="filme-info" class="filme-info">
+        <img class="banner" src="" alt="banner">
+        <h2 id="titulo"></h2>
+        <p id="detalhes"></p>
+        <button class="button" id="button1">Assistir</button>
+        <button class="butterfly" id="button2">Telegram</button>
+        <p id="sinopse"></p>
+        <h3>Contribuidores</h3>
+        <ul id="contribuidores"></ul>
+    </div>
+
+    <script>
+        // Função para fazer a solicitação à API do TMDb e preencher os valores no HTML
+        async function preencherDadosFilme(idFilme) {
+            const url = `https://api.themoviedb.org/3/movie/${idFilme}?api_key=6360eb433f3020d94a5de4f0fb52c720&language=pt-BR`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                // Preencher os valores nos elementos HTML
+                document.querySelector('.banner').src = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+                document.getElementById('titulo').textContent = data.title;
+                document.getElementById('detalhes').textContent = `${data.release_date} • ${data.runtime}m • ${data.genres.map(genre => genre.name).join(' • ')}`;
+                document.getElementById('sinopse').textContent = data.overview;
+                // Preencher top de contribuidores
+                const contribuidores = document.getElementById('contribuidores');
+                contribuidores.innerHTML = '';
+                if (data.contributors) {
+                    data.contributors.slice(0, 5).forEach(contributor => {
+                        const li = document.createElement('li');
+                        li.textContent = contributor.name;
+                        contribuidores.appendChild(li);
+                    });
+                } else {
+                    const li = document.createElement('li');
+                    li.textContent = 'Informações de contribuidores não disponíveis.';
+                    contribuidores.appendChild(li);
+                }
+            } catch (error) {
+                console.error('Erro ao obter dados do filme:', error);
+            }
+        }
+
+        // ID do filme para teste
+        const idFilme = '653346'; // ID do filme "653346"
+        preencherDadosFilme(idFilme);
+    </script>
+</body>
+</html>
