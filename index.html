@@ -18,14 +18,22 @@
         <button class="button" id="button1">Assistir</button>
         <button class="butterfly" id="button2">Telegram</button>
         <p id="sinopse"></p>
-        <h3>Contribuidores</h3>
+        <h3>Top de Contribuidores</h3>
         <ul id="contribuidores"></ul>
     </div>
 
     <script>
+        // Função para extrair o ID do filme do URL
+        function extrairIDDoURL() {
+            const url = window.location.href;
+            const partesDoURL = url.split('/');
+            return partesDoURL[partesDoURL.length - 1];
+        }
+
         // Função para fazer a solicitação à API do TMDb e preencher os valores no HTML
-        async function preencherDadosFilme(idFilme) {
-            const url = `https://api.themoviedb.org/3/movie/${idFilme}?api_key=6360eb433f3020d94a5de4f0fb52c720&language=pt-BR`;
+        async function preencherDadosFilme() {
+            const idFilme = extrairIDDoURL();
+            const url = `https://api.themoviedb.org/3/movie/${idFilme}?api_key=360eb433f3020d94a5de4f0fb52c720&language=pt-BR`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
@@ -53,9 +61,8 @@
             }
         }
 
-        // ID do filme para teste
-        const idFilme = '653346'; // ID do filme "653346"
-        preencherDadosFilme(idFilme);
+        // Chamar a função para preencher os dados do filme ao carregar a página
+        preencherDadosFilme();
     </script>
 </body>
 </html>
